@@ -65,6 +65,7 @@ func main() {
 	fmt.Printf("%v %d\n", ch, size)
 	bytes = bytes[size:]
 	fmt.Printf("%s \n", bytes)
+
 }
 
 //rune 相当于Go的char  但是它是int32   byte是uint8rune用来表示Unicode的code point
