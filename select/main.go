@@ -61,6 +61,21 @@ func CreateSimpWorker() chan int {
 	return c
 }
 
+// PrintfWorker ...
+func PrintfWorker(c chan int) {
+	for v := range c {
+		time.Sleep(time.Second)
+		fmt.Println("Printf chan value ", v)
+	}
+}
+
+// CreateWorker ...
+func CreateWorker() chan int {
+	c := make(chan int)
+	go PrintfWorker(c)
+	return c
+}
+
 // GetValue ...
 func GetValue() chan int {
 
@@ -76,20 +91,38 @@ func GetValue() chan int {
 	return out
 }
 
+/*
 func main() {
 	//DoWorker()
 	var c1, c2 = GetValue(), GetValue()
-	c := CreateSimpWorker()
+	//c := CreateSimpWorker()
+	n := 0
+	var w = CreateWorker()
+	var valueGroup []int
+	tm := time.After(time.Second * 10) //这两个都是定时装置
+	tick := time.Tick(time.Second)
 	for {
+
+		var active chan int
+		var actValue int
+		if len(valueGroup) > 0 {
+			active = w
+			actValue = valueGroup[0]
+		}
 		select {
-		case n := <-c1:
-			fmt.Println("This is c1")
-			c <- n
-			//fmt.Println("Receive from c1", n)
-		case n := <-c2:
-			fmt.Println("This is c2")
-			c <- n
-			//fmt.Println("Receive from c2", n)
+		case n = <-c1:
+			valueGroup = append(valueGroup, n)
+		case n = <-c2:
+			valueGroup = append(valueGroup, n)
+		case active <- actValue:
+			valueGroup = valueGroup[1:]
+		case <-time.After(time.Millisecond * 800):
+			fmt.Println("time out")
+		case <-tick:
+			fmt.Println("valueGroup length is:=", len(valueGroup))
+		case <-tm:
+			fmt.Println("Bye Bye!!!!!")
+			return
 		}
 	}
-}
+}*/
